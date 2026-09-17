@@ -1,0 +1,113 @@
+# 🚀 Deployment Guide: Full-Stack Restaurant Ordering System
+
+This guide details how to deploy your full-stack restaurant system online using **Vercel** (Frontend) and **Render** (Backend & PostgreSQL Database) for free.
+
+---
+
+## Architecture Overview
+
+```
+Customer & Admin Browsers
+         │
+         ▼
+[ Vercel (Frontend React SPA) ]
+  URL: https://your-restaurant.vercel.app
+         │
+         │ API Requests (VITE_API_URL)
+         ▼
+[ Render (Laravel 12 Backend Web Service) ]
+  URL: https://your-backend.onrender.com
+         │
+         ├──► [ Render / Neon Free Managed PostgreSQL Database ]
+         │
+         └──► [ Telegram Bot API (Live Orders & Bill Alerts) ]
+```
+
+---
+
+## Step 1: Push Code to GitHub
+
+1. Open [GitHub](https://github.com/new) and create a **New Repository** (e.g. `food_system`). Keep it Private or Public.
+2. In your terminal, link your repository and push the code:
+
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/food_system.git
+git push -u origin main
+```
+
+---
+
+## Step 2: Deploy Backend & Database on Render (Free)
+
+1. Go to [Render.com](https://render.com) and sign in with your GitHub account.
+2. Click **New +** > **Blueprint**.
+3. Select your `food_system` repository.
+4. Render will automatically detect [`render.yaml`](./render.yaml):
+   - **PostgreSQL Database** (`food-system-db`)
+   - **Backend Web Service** (`food-system-backend`) using Docker
+5. Click **Apply**.
+6. In the Backend Web Service settings on Render, configure the following Environment Variables under **Environment**:
+   - `APP_KEY`: Generate one locally via `php artisan key:generate --show` or paste 32 random characters: `base64:...`
+   - `APP_URL`: Your Render backend URL (e.g., `https://your-backend.onrender.com`)
+   - `FRONTEND_URL`: Your Vercel domain once created (e.g., `https://your-restaurant.vercel.app`)
+   - `DATABASE_URL`: Your PostgreSQL connection string (from Neon.tech or Render)
+   - `TELEGRAM_BOT_TOKEN`: Your Telegram Bot Token
+   - `TELEGRAM_CHAT_ID`: Your Telegram Group or Channel ID
+
+Migrations run automatically on boot. No manual seeding is needed!
+
+---
+
+## Step 3: Deploy Frontend on Vercel (Free)
+
+1. Go to [Vercel.com](https://vercel.com) and sign in with your GitHub account.
+2. Click **Add New...** > **Project**.
+3. Select your `food_system` repository and click **Import**.
+4. Configure Project Settings:
+   - **Framework Preset**: Vite
+   - **Root Directory**: Click `Edit` and choose `frontend`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+5. Under **Environment Variables**, add:
+   - `VITE_API_URL`: `https://your-backend.onrender.com/api`
+6. Click **Deploy**.
+
+Vercel will build and launch your website with a free SSL certificate in under 60 seconds!
+
+---
+
+## Step 4: Final Link
+
+1. Copy your live Vercel URL (e.g. `https://your-restaurant.vercel.app`).
+2. Go back to Render > **food-system-backend** > **Environment**.
+3. Update `FRONTEND_URL` to your Vercel URL.
+4. Render will auto-redeploy to apply the updated CORS origin.
+
+Your website is now 100% online and accessible worldwide on smartphones, tablets, and computers!
+
+---
+
+## Alternative: Self-Hosted Production with Docker Compose
+
+If deploying on a VPS (DigitalOcean, AWS EC2, Linode, or local server):
+
+1. Clone the repository on your server:
+```bash
+git clone https://github.com/YOUR_USERNAME/food_system.git
+cd food_system
+```
+
+2. Start the entire full-stack system with a single command:
+```bash
+docker compose up -d --build
+```
+
+This launches:
+- **PostgreSQL 16 Alpine** on port `5432` with persistent data volume
+- **Laravel 12 Production Backend** on port `8000` (OPcache + Nginx Gzip)
+- **React Frontend SPA** on port `3000` (Nginx static bundle)
+
+3. Check container status:
+```bash
+docker compose ps
+```

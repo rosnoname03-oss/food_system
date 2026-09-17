@@ -1,0 +1,2 @@
+export const DEFAULT_PLACEHOLDER_IMAGE =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Crect width='100' height='100' fill='%23f1f5f9'/%3E%3Cpath d='M30 45c0 11.046 8.954 20 20 20s20-8.954 20-20H30z' fill='%23cbd5e1'/%3E%3Cpath d='M25 45h50M50 65v8M40 73h20M38 34c0-3 2-5 5-5s4 2 4 5M48 34c0-3 2-5 5-5s4 2 4 5' stroke='%2394a3b8' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";

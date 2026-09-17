@@ -1,0 +1,22 @@
+name: Keep Backend Alive
+
+on:
+  schedule:
+    # Run every 10 minutes (cron format: minute hour day month day-of-week)
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: Ping Render Health Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send keep-alive HTTP GET
+        env:
+          TARGET_URL: ${{ secrets.BACKEND_HEALTH_URL }}
+        run: |
+          if [ -n "$TARGET_URL" ]; then
+            curl -s -f -m 30 "$TARGET_URL" || echo "Ping request completed"
+          else
+            echo "No BACKEND_HEALTH_URL secret set; skipping ping."
+          fi
